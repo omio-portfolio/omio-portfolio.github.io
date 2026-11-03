@@ -109,6 +109,33 @@ GROUPS.forEach((g) => {
   );
 });
 
+// folders: three covers slide up out of each folder on hover (first tap on touch screens)
+const coverOf = (v) => {
+  const p = parseVideo(v.url);
+  if (!p) return "";
+  return p.kind === "yt" ? `https://img.youtube.com/vi/${p.id}/hqdefault.jpg`
+    : p.kind === "drive" ? `thumb-${p.id}.jpg` : `thumb-${p.id}.png`;
+};
+document.querySelectorAll(".folders .folder-tab").forEach((a) => {
+  const gid = a.getAttribute("href").replace("#g-", "");
+  const list = VIDEOS.filter((v) => v.cat === gid).slice(0, 3);
+  const wrap = document.createElement("div");
+  wrap.className = "folder-wrap";
+  a.replaceWith(wrap);
+  wrap.innerHTML = `<div class="peeks">${list.map((v, i) =>
+    `<button class="peek p${i}" data-cat="${gid}" data-i="${i}" aria-label="Play ${v.title}"><img loading="lazy" src="${coverOf(v)}" alt="" onerror="this.remove()"></button>`
+  ).join("")}</div>`;
+  wrap.appendChild(a);
+  if (matchMedia("(hover: none)").matches) {
+    a.addEventListener("click", (e) => {
+      if (wrap.classList.contains("open")) return;
+      e.preventDefault();
+      document.querySelectorAll(".folder-wrap.open").forEach((w) => w.classList.remove("open"));
+      wrap.classList.add("open");
+    });
+  }
+});
+
 // read each Drive thumbnail's real ratio and shape its card to match
 VIDEOS.forEach((v, n) => {
   const p = parseVideo(v.url);
@@ -128,8 +155,8 @@ const modal = document.getElementById("modal");
 const box = modal.querySelector(".modal-box");
 const frame = modal.querySelector(".frame");
 function closeModal() { modal.classList.remove("open"); frame.innerHTML = ""; }
-mount.addEventListener("click", (e) => {
-  const c = e.target.closest(".card[data-cat]");
+document.addEventListener("click", (e) => {
+  const c = e.target.closest(".card[data-cat], .peek[data-cat]");
   if (!c) return;
   const g = GROUPS.find((x) => x.id === c.dataset.cat);
   const v = VIDEOS.filter((x) => x.cat === g.id)[c.dataset.i];
