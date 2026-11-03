@@ -208,3 +208,4 @@ section { min-height: 100vh; padding: 90px 6vw 60px; scroll-snap-align: start; p
 .vertical .frame { max-height: none; }
 .grid { align-items: start; }
 .card .thumb img.cover { position: absolute; inset: 0; }
+.f-pod { background: #dbeeff; color: var(--navy); }

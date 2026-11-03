@@ -7,7 +7,7 @@ const SOCIALS = [
   { label: "WhatsApp", url: "https://wa.me/qr/HHIMOSEEY37MD1" },
 ];
 
-// cat: "long" | "short" | "local". url: YouTube (watch / youtu.be / shorts) or Instagram reel/post link.
+// cat: "long" | "short" | "local" | "pod". url: YouTube (watch / youtu.be / shorts) or Instagram reel/post link.
 const VIDEOS = [
   { cat: "short", title: "Short video 2", label: "Short form", url: "https://drive.google.com/file/d/128M1zVUevE5FePbhJwMR1r2zL9Ql68j1/view" },
   { cat: "long", title: "BSL1", label: "Long form", url: "https://drive.google.com/file/d/1ieX58ZK_xfzDTNh1zGmDmVGdXI91CrJ6/view" },
@@ -20,6 +20,9 @@ const VIDEOS = [
   { cat: "local", title: "Local client 3", url: "https://drive.google.com/file/d/1vPMjJGQAPTfIkdBiuB7g9KCJ4fP2Dc_I/view" },
   { cat: "short", title: "Short video 4", label: "Short form", url: "https://drive.google.com/file/d/1uEgPFLfnCKC3Lj1A7P-jEmli17KulNa6/view" },
   { cat: "short", title: "Short video 5", label: "Short form", url: "https://drive.google.com/file/d/1G1KwWTG54Fw7bsggtSLRqiwcTbelniFH/view" },
+  { cat: "pod", title: "Podcast 1", url: "https://drive.google.com/file/d/1ELb78PtSoXhrgMWfNAxgf0DStgvJ_gZ-/view" },
+  { cat: "pod", title: "Podcast 2", url: "https://drive.google.com/file/d/1KS50lRODr2FIeqOnYalsKgHmEymAdS9Y/view" },
+  { cat: "short", title: "Short video 6", label: "Short form", url: "https://drive.google.com/file/d/1J7EXJtsVqhKgpLk55KTlD0Gj1G3t5g9D/view" },
   { cat: "short", title: "Short video 1", label: "Short form", url: "https://drive.google.com/file/d/10GJ-bI2KORyXrJtDOz8JDAEfTALFOcof/view" },
   // { cat: "long", title: "Video title", label: "Client / type", url: "https://www.youtube.com/watch?v=XXXXXXXXXXX" },
 ];
@@ -29,6 +32,7 @@ const GROUPS = [
   { id: "long", name: "Long Form", cls: "f-long", vertical: false },
   { id: "short", name: "Short Form", cls: "f-short", vertical: true },
   { id: "local", name: "Local Client", cls: "f-local", vertical: false },
+  { id: "pod", name: "Podcast", cls: "f-pod", vertical: false },
 ];
 
 function parseVideo(url) {
