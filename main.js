@@ -7,7 +7,7 @@ const SOCIALS = [
   { label: "WhatsApp", url: "https://wa.me/qr/HHIMOSEEY37MD1" },
 ];
 
-// cat: "long" | "short" | "local" | "pod". url: YouTube (watch / youtu.be / shorts) or Instagram reel/post link.
+// cat: "long" | "short" | "local" | "pod" | "style". url: YouTube (watch / youtu.be / shorts) or Instagram reel/post link.
 const VIDEOS = [
   { cat: "short", title: "Short video 2", label: "Short form", url: "https://drive.google.com/file/d/128M1zVUevE5FePbhJwMR1r2zL9Ql68j1/view" },
   { cat: "long", title: "BSL1", label: "Long form", url: "https://drive.google.com/file/d/1ieX58ZK_xfzDTNh1zGmDmVGdXI91CrJ6/view" },
@@ -24,6 +24,10 @@ const VIDEOS = [
   { cat: "pod", title: "Podcast 2", url: "https://drive.google.com/file/d/1KS50lRODr2FIeqOnYalsKgHmEymAdS9Y/view" },
   { cat: "pod", title: "Podcast 3", url: "https://drive.google.com/file/d/1j2JregA1Sdq3gK_RUTHAnJF6U4oqGY1T/view" },
   { cat: "short", title: "Short video 6", label: "Short form", url: "https://drive.google.com/file/d/1J7EXJtsVqhKgpLk55KTlD0Gj1G3t5g9D/view" },
+  { cat: "style", title: "Style 1", url: "https://drive.google.com/file/d/1BHuwrTsnhBvPxG1nzpsiLQ5jcmRWOnR-/view" },
+  { cat: "style", title: "Style 2", url: "https://drive.google.com/file/d/12U1MSnjbRUNub0GwNkuhsKwEF9Hs7iVf/view" },
+  { cat: "style", title: "Style 3", url: "https://drive.google.com/file/d/1HjimS6Iq1vj6VXhx5JlqeKpxXstdAsXr/view" },
+  { cat: "style", title: "Style 4", url: "https://drive.google.com/file/d/1k-IdAku5AGbCuv5WKiwW9VItOaeqTL81/view" },
   { cat: "short", title: "Short video 1", label: "Short form", url: "https://drive.google.com/file/d/10GJ-bI2KORyXrJtDOz8JDAEfTALFOcof/view" },
   // { cat: "long", title: "Video title", label: "Client / type", url: "https://www.youtube.com/watch?v=XXXXXXXXXXX" },
 ];
@@ -34,6 +38,7 @@ const GROUPS = [
   { id: "short", name: "Short Form", cls: "f-short", vertical: true },
   { id: "local", name: "Local Client", cls: "f-local", vertical: false },
   { id: "pod", name: "Podcast", cls: "f-pod", vertical: false },
+  { id: "style", name: "Omio's Style", cls: "f-style", vertical: true },
 ];
 
 function parseVideo(url) {
@@ -66,11 +71,19 @@ function fitModal(p) {
   box.style.width = `min(900px, calc(80vh * ${r} + 20px), 100%)`;
 }
 
+// social icons (24x24)
+const ICONS = {
+  Instagram: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>',
+  Facebook: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M13.5 21v-8h2.7l.5-3.2h-3.2V7.8c0-.9.3-1.5 1.6-1.5h1.7V3.4c-.3 0-1.3-.1-2.4-.1-2.4 0-4 1.5-4 4.1v2.4H7.7V13h2.7v8h3.1z"/></svg>',
+  LinkedIn: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6.9 9H3.6v11h3.3V9zM5.2 3.5a1.9 1.9 0 1 0 0 3.8 1.9 1.9 0 0 0 0-3.8zM20.4 13.4c0-3-1.6-4.6-3.9-4.6-1.5 0-2.5.8-3 1.6V9h-3.3v11h3.3v-6c0-1.4.7-2.3 1.9-2.3 1.1 0 1.6.8 1.6 2.3v6h3.4v-6.6z"/></svg>',
+  WhatsApp: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21l1.6-4.7A8.5 8.5 0 1 1 8 19.5L3 21z"/><path d="M9 8.5c0 3.5 3 6.5 6.5 6.5l1.2-1.4-2-1-1 .8c-1-.4-2-1.4-2.4-2.4l.8-1-1-2L9 8.5z" fill="currentColor" stroke="none"/></svg>',
+};
+
 // socials
-const socialHtml = SOCIALS.map((s) => `<a href="${s.url}" target="_blank" rel="noopener">${s.label}</a>`).join("");
+const socialHtml = SOCIALS.map((s) => `<a href="${s.url}" target="_blank" rel="noopener">${ICONS[s.label] || ""}<span>${s.label}</span></a>`).join("");
 document.querySelectorAll(".socials").forEach((el) => (el.innerHTML = socialHtml));
 document.querySelector(".nav .dots").innerHTML = SOCIALS.map(
-  (s) => `<a href="${s.url}" target="_blank" rel="noopener" aria-label="${s.label}"></a>`
+  (s) => `<a href="${s.url}" target="_blank" rel="noopener" aria-label="${s.label}" title="${s.label}">${ICONS[s.label] || ""}</a>`
 ).join("");
 
 // work groups
