@@ -11,9 +11,27 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Pixelify+Sans:wght@500;700&family=Space+Mono&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=12">
+<link rel="stylesheet" href="style.css?v=16">
+<script>try{if(sessionStorage.getItem("seen"))document.documentElement.classList.add("no-intro");else document.documentElement.classList.add("intro-on");sessionStorage.setItem("seen","1")}catch(e){}</script>
 </head>
 <body>
+<div class="intro">
+  <i class="star s1">&#10022;</i><i class="star s2">&#10022;</i><i class="star s3">&#10022;</i><i class="star s4">&#10022;</i><i class="star s5">&#10022;</i><i class="star s6">&#10022;</i>
+  <div class="intro-stage">
+    <svg class="intro-arc" viewBox="0 0 1000 300" aria-label="Rubaiet Ahmed Omio">
+      <path id="introArc" d="M 40 285 Q 500 15 960 285" fill="none"/>
+      <text><textPath href="#introArc" startOffset="50%" text-anchor="middle">RUBAIET AHMED OMIO</textPath></text>
+    </svg>
+    <div class="intro-present hand">presents</div>
+    <div class="tv-float">
+      <button class="tv" id="introTv" aria-label="Enter the website">
+        <span class="tv-screen"><span class="tv-digits pixel">1 2 3<br>4 5 6<br>7 8 9</span><span class="tv-static"></span><span class="tv-noise"></span></span>
+        <span class="tv-side"><i class="knob"></i><i class="knob"></i><i class="grill"></i></span>
+      </button>
+    </div>
+    <div class="intro-hint hand">Scroll to the Program</div>
+  </div>
+</div>
 
 <nav class="nav">
   <a href="#home" class="active">Home</a>
@@ -24,6 +42,7 @@
 </nav>
 
 <section id="home">
+  <div class="watermark" aria-hidden="true">OMIO</div>
   <div class="hero-stickers"><span class="sticker">video editor</span><span class="sticker b">premiere pro</span><span class="sticker c">after effects</span></div>
   <div class="name-box" id="nameBtn" role="button" tabindex="0" aria-label="Watch my main reel">
     <i class="corner c1"></i><i class="corner c2"></i><i class="corner c3"></i><i class="corner c4"></i>
@@ -41,11 +60,16 @@
   </div>
 </section>
 
+<div class="tapes" aria-hidden="true">
+  <div class="tape-strip t1"><div class="tape-run"><span>LONG FORM &#10022; SHORT FORM &#10022; PODCAST &#10022; LOCAL CLIENT &#10022; OMIO'S STYLE &#10022; MOTION GRAPHICS &#10022; SOUND DESIGN &#10022; </span><span>LONG FORM &#10022; SHORT FORM &#10022; PODCAST &#10022; LOCAL CLIENT &#10022; OMIO'S STYLE &#10022; MOTION GRAPHICS &#10022; SOUND DESIGN &#10022; </span></div></div>
+  <div class="tape-strip t2"><div class="tape-run"><span>AVAILABLE FOR WORK &#9654; PREMIERE PRO &#9654; AFTER EFFECTS &#9654; EDITS THAT KEEP PEOPLE WATCHING &#9654; LET'S TALK &#9654; </span><span>AVAILABLE FOR WORK &#9654; PREMIERE PRO &#9654; AFTER EFFECTS &#9654; EDITS THAT KEEP PEOPLE WATCHING &#9654; LET'S TALK &#9654; </span></div></div>
+</div>
+
 <section id="about">
   <div class="about-wrap">
     <figure class="polaroid">
       <span class="tape"></span>
-      <img id="photo" class="photo" src="photo.webp" alt="Rubaiet Ahmed Omio">
+      <img id="photo" class="photo" src="profile.webp" alt="Rubaiet Ahmed Omio">
       <figcaption>that's me</figcaption>
     </figure>
     <div class="about-copy">
@@ -66,15 +90,29 @@
 
 <section id="work">
   <div class="work-head">
-    <h2 class="pixel">MY WORK</h2>
-    <p>tap any video to watch</p>
+    <div>
+      <h2 class="pixel">MY WORK</h2>
+      <p>tap any video to watch</p>
+    </div>
+    <div class="tv-unit">
+      <button class="tv mini" id="workTv" aria-label="Play this video">
+      <span class="tv-screen"><img id="workTvImg" alt=""><span class="tv-static"></span><span class="tv-noise"></span><span class="tv-play">&#9654;</span></span>
+      <span class="tv-side"><i class="knob"></i><i class="knob"></i><i class="grill"></i></span>
+    </button>
+      <div class="tv-deck">
+        <span class="tv-label" id="tvLabel">CH 01</span>
+        <button id="tvPrev" aria-label="Previous video">&#9664;</button>
+        <button id="tvNext" aria-label="Next video">&#9654;</button>
+      </div>
+    </div>
   </div>
   <div id="groups"></div>
-  <div class="contact" id="contact">
-    <h2 class="pixel">LET'S TALK</h2>
-    <div class="smiley">☺</div>
-    <p class="hand" style="font-size:24px">Got a project? Send me a message.</p>
+  <div class="contact cta" id="contact">
+    <h2 class="pixel">GREAT THINGS BEGIN TOGETHER.</h2>
+    <p class="hand">Got a project? Send me a message.</p>
+    <a class="btn pill" href="https://wa.me/qr/HHIMOSEEY37MD1" target="_blank" rel="noopener">Let's connect <span aria-hidden="true">&#8599;</span></a>
     <div class="socials"></div>
+    <div class="cta-mark pixel" aria-hidden="true">OMIO</div>
   </div>
 </section>
 
@@ -82,6 +120,6 @@
   <div class="modal-box"><button class="close" aria-label="Close">✕</button><div class="frame"></div></div>
 </div>
 
-<script src="main.js?v=12"></script>
+<script src="main.js?v=16"></script>
 </body>
 </html>

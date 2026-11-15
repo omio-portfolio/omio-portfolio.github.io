@@ -20,6 +20,7 @@ const VIDEOS = [
   { cat: "local", title: "Local client 3", url: "https://drive.google.com/file/d/1vPMjJGQAPTfIkdBiuB7g9KCJ4fP2Dc_I/view" },
   { cat: "short", title: "Short video 4", label: "Short form", url: "https://drive.google.com/file/d/1uEgPFLfnCKC3Lj1A7P-jEmli17KulNa6/view" },
   { cat: "short", title: "Short video 5", label: "Short form", url: "https://drive.google.com/file/d/1G1KwWTG54Fw7bsggtSLRqiwcTbelniFH/view" },
+  { cat: "pod", title: "Dana Trailer", featured: true, url: "https://drive.google.com/file/d/1kNnYThiYDaUtYMXflpCeh90nmlQ1kujl/view" },
   { cat: "pod", title: "Podcast 1", url: "https://drive.google.com/file/d/1ELb78PtSoXhrgMWfNAxgf0DStgvJ_gZ-/view" },
   { cat: "pod", title: "Podcast 2", url: "https://drive.google.com/file/d/1KS50lRODr2FIeqOnYalsKgHmEymAdS9Y/view" },
   { cat: "pod", title: "Podcast 3", url: "https://drive.google.com/file/d/1j2JregA1Sdq3gK_RUTHAnJF6U4oqGY1T/view" },
@@ -98,7 +99,7 @@ GROUPS.forEach((g) => {
           : p && p.kind === "drive"
           ? `<img loading="lazy" src="thumb-${p.id}.jpg" alt="">`
           : `<span class="hand reel-label">reel</span><img class="cover" loading="lazy" src="thumb-${p.id}.png" alt="" onerror="this.remove()">`;
-        return `<button class="card" data-cat="${g.id}" data-i="${i}" aria-label="${v.title}">
+        return `<button class="card${v.featured ? " featured" : ""}" data-cat="${g.id}" data-i="${i}" aria-label="${v.title}">${v.featured ? '<span class="sticker d feat-tag">highlight</span>' : ""}
           <div class="thumb" ${p && p.kind === "ig" ? 'style="aspect-ratio: 9 / 16"' : ""}>${thumb}<div class="play">▶</div></div></button>`;
       }).join("")
     : [1, 2, 3].map(() => `<div class="card placeholder"><div class="thumb">video coming soon</div></div>`).join("");
@@ -207,7 +208,165 @@ if (img.complete && img.naturalWidth === 0) photoFallback();
 const links = [...document.querySelectorAll(".nav > a[href^='#']")];
 const io = new IntersectionObserver((entries) => {
   entries.forEach((en) => {
-    if (en.isIntersecting) links.forEach((l) => l.classList.toggle("active", l.getAttribute("href") === "#" + en.target.id));
+    if (en.isIntersecting) { links.forEach((l) => l.classList.toggle("active", l.getAttribute("href") === "#" + en.target.id)); if (window.movePill) movePill(); }
   });
 }, { threshold: 0.2 });
 ["home", "about", "work"].forEach((id) => io.observe(document.getElementById(id)));
+
+
+// ---------------- motion (calm, ease 40/80) ----------------
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const nav = document.querySelector(".nav");
+
+// sliding highlight behind the active nav item
+const pill = document.createElement("span");
+pill.className = "nav-pill";
+nav.prepend(pill);
+window.movePill = function () {
+  const a = [...nav.children].find((el) => el.classList && el.classList.contains("active"));
+  if (!a) return;
+  pill.style.left = a.offsetLeft + "px";
+  pill.style.width = a.offsetWidth + "px";
+};
+movePill();
+window.addEventListener("resize", movePill);
+window.addEventListener("load", movePill);
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(movePill);
+
+if (!reduce) {
+  // name rises letter by letter (after the intro curtain lifts)
+  const nameH1 = document.querySelector(".name-box h1");
+  nameH1.setAttribute("aria-label", nameH1.textContent);
+  let k = 0;
+  nameH1.innerHTML = nameH1.textContent.split(" ").map((w) =>
+    `<span class="wd" aria-hidden="true">${[...w].map((c) => `<span class="ch" style="--k:${k++}"><span>${c}</span></span>`).join("")}</span>`
+  ).join(" ");
+
+  // headings: words slide up from a mask
+  document.querySelectorAll(".about-copy h2, .work-head h2, .contact h2").forEach((h2) => {
+    const txt = h2.textContent;
+    h2.setAttribute("aria-label", txt);
+    h2.innerHTML = txt.split(" ").map((w, i) => `<span class="w" aria-hidden="true"><span style="--k:${i}">${w}</span></span>`).join(" ");
+    h2.classList.add("reveal-words");
+  });
+
+  // everything else rises in with a slight 3D tilt, staggered, then goes back to normal
+  const targets = document.querySelectorAll(
+    ".group-title, .grid .card, .work-head p, .about-copy > p, .skills, .about-copy .socials, .polaroid, .reel, .contact > :not(h2):not(.cta-mark)"
+  );
+  targets.forEach((el) => {
+    const i = Math.min([...el.parentElement.children].indexOf(el), 8);
+    el.style.setProperty("--i", i);
+    el.classList.add("reveal");
+  });
+  const rev = new IntersectionObserver((es) => es.forEach((e) => {
+    if (!e.isIntersecting) return;
+    const el = e.target;
+    el.classList.add("in");
+    rev.unobserve(el);
+    setTimeout(() => el.classList.remove("reveal", "in"), 1400 + (parseInt(el.style.getPropertyValue("--i")) || 0) * 90);
+  }), { threshold: 0.12 });
+  targets.forEach((el) => rev.observe(el));
+  const wio = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add("in"); wio.unobserve(e.target); } }), { threshold: 0.4 });
+  document.querySelectorAll(".reveal-words").forEach((el) => wio.observe(el));
+
+  if (matchMedia("(hover: hover)").matches) {
+    // cards tilt toward the cursor
+    document.querySelectorAll(".card[data-cat]").forEach((c) => {
+      c.addEventListener("pointermove", (e) => {
+        const r = c.getBoundingClientRect();
+        const x = (e.clientX - r.left) / r.width - 0.5, y = (e.clientY - r.top) / r.height - 0.5;
+        c.style.transform = `perspective(700px) rotateY(${x * 10}deg) rotateX(${-y * 10}deg) translateY(-4px)`;
+      });
+      c.addEventListener("pointerleave", () => { c.style.transform = ""; });
+    });
+    // hero stickers drift with the mouse
+    const home = document.getElementById("home");
+    home.addEventListener("pointermove", (e) => {
+      const r = home.getBoundingClientRect();
+      home.style.setProperty("--mx", ((e.clientX - r.left) / r.width - 0.5).toFixed(3));
+      home.style.setProperty("--my", ((e.clientY - r.top) / r.height - 0.5).toFixed(3));
+    });
+  }
+
+  // parallax: OMIO watermark behind the hero, and the one rising inside the contact panel
+  const wm = document.querySelector(".watermark"), cta = document.querySelector(".cta");
+  let ticking = false;
+  window.addEventListener("scroll", () => {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => {
+      wm.style.setProperty("--py", window.scrollY * 0.22 + "px");
+      const r = cta.getBoundingClientRect();
+      const p = Math.min(Math.max(1 - r.top / innerHeight, 0), 1);
+      cta.style.setProperty("--py2", (1 - p) * 60 + "px");
+      ticking = false;
+    });
+  }, { passive: true });
+}
+
+
+// ---------------- opening screen: scroll (or click) and the camera goes inside the TV ----------------
+const htmlEl = document.documentElement;
+const intro = document.querySelector(".intro");
+let entered = false;
+function enterSite() {
+  if (entered) return;
+  entered = true;
+  const st = intro.querySelector(".intro-stage");
+  const sc = intro.querySelector(".tv-screen").getBoundingClientRect(), r = st.getBoundingClientRect();
+  st.style.transformOrigin = `${sc.left + sc.width / 2 - r.left}px ${sc.top + sc.height / 2 - r.top}px`;
+  intro.classList.add("go");
+  setTimeout(() => { htmlEl.classList.add("entered"); htmlEl.classList.remove("intro-on"); window.scrollTo(0, 0); }, 800);
+  setTimeout(() => intro.remove(), 1800);
+}
+if (reduce || htmlEl.classList.contains("no-intro")) {
+  entered = true;
+  intro.remove();
+  htmlEl.classList.remove("intro-on");
+  htmlEl.classList.add("entered");
+} else {
+  intro.addEventListener("click", enterSite);
+  intro.addEventListener("wheel", (e) => { if (e.deltaY > 0) enterSite(); }, { passive: true });
+  intro.addEventListener("touchmove", enterSite, { passive: true });
+  window.addEventListener("keydown", (e) => { if (["ArrowDown", "PageDown", " ", "Enter"].includes(e.key)) enterSite(); });
+  // everything drifts a little with the pointer
+  intro.addEventListener("pointermove", (e) => {
+    intro.style.setProperty("--mx", (e.clientX / innerWidth - 0.5).toFixed(3));
+    intro.style.setProperty("--my", (e.clientY / innerHeight - 0.5).toFixed(3));
+  });
+}
+
+// ---------------- small TV beside "My Work": flips through the covers, click to play ----------------
+const workTv = document.getElementById("workTv"), workTvImg = document.getElementById("workTvImg");
+const tvPool = VIDEOS.filter((v) => { const p = parseVideo(v.url); return p && p.kind === "drive"; });
+let tvAt = 0, tvTimer;
+const tvLabel = document.getElementById("tvLabel");
+function tvShow() {
+  const v = tvPool[tvAt];
+  workTv.classList.add("switch");   // burst of static between channels
+  tvLabel.textContent = `CH ${String(tvAt + 1).padStart(2, "0")} · ${GROUPS.find((g) => g.id === v.cat).name.toUpperCase()}`;
+  setTimeout(() => { workTvImg.src = coverOf(v); }, 160);
+  setTimeout(() => workTv.classList.remove("switch"), 420);
+}
+function tvStep(d) {
+  tvAt = (tvAt + d + tvPool.length) % tvPool.length;
+  tvShow();
+  clearInterval(tvTimer);
+  if (!reduce) tvTimer = setInterval(() => tvStep(1), 3200);
+}
+if (tvPool.length) {
+  tvShow();
+  if (!reduce) tvTimer = setInterval(() => tvStep(1), 3200);
+  document.getElementById("tvPrev").addEventListener("click", () => tvStep(-1));
+  document.getElementById("tvNext").addEventListener("click", () => tvStep(1));
+  workTv.addEventListener("click", () => {
+    const v = tvPool[tvAt];
+    const i = VIDEOS.filter((x) => x.cat === v.cat).indexOf(v);
+    const card = document.querySelector(`.card[data-cat="${v.cat}"][data-i="${i}"]`);
+    if (card) card.click();
+  });
+}
+
+// intro TV: static first, then the picture tunes in
+if (intro && intro.isConnected) setTimeout(() => intro.classList.add("tuned"), 1100);
