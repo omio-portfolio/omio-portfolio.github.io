@@ -18,6 +18,7 @@ const VIDEOS = [
   { cat: "local", title: "Local client 1", url: "https://drive.google.com/file/d/1PQ-E5zyFq6XL4ejIWu-hs9fY9v9yPKYw/view" },
   { cat: "local", title: "Local client 2", url: "https://drive.google.com/file/d/1bxjrePVs7vAdruxivac2zPjj86J_YXNV/view" },
   { cat: "local", title: "Local client 3", url: "https://drive.google.com/file/d/1vPMjJGQAPTfIkdBiuB7g9KCJ4fP2Dc_I/view" },
+  { cat: "local", title: "Local client 4", url: "https://drive.google.com/file/d/1Xtc8u0l7e1aiAQK09gws2efo_DFr3pkl/view" },
   { cat: "short", title: "Short video 4", label: "Short form", url: "https://drive.google.com/file/d/1uEgPFLfnCKC3Lj1A7P-jEmli17KulNa6/view" },
   { cat: "short", title: "Short video 5", label: "Short form", url: "https://drive.google.com/file/d/1G1KwWTG54Fw7bsggtSLRqiwcTbelniFH/view" },
   { cat: "pod", title: "Dana Trailer", featured: true, url: "https://drive.google.com/file/d/1kNnYThiYDaUtYMXflpCeh90nmlQ1kujl/view" },
@@ -29,6 +30,11 @@ const VIDEOS = [
   { cat: "style", title: "Style 2", url: "https://drive.google.com/file/d/12U1MSnjbRUNub0GwNkuhsKwEF9Hs7iVf/view" },
   { cat: "style", title: "Style 3", url: "https://drive.google.com/file/d/1HjimS6Iq1vj6VXhx5JlqeKpxXstdAsXr/view" },
   { cat: "style", title: "Style 4", url: "https://drive.google.com/file/d/1k-IdAku5AGbCuv5WKiwW9VItOaeqTL81/view" },
+  // personal / experimental videos, shown in Omio's Lab beside "My Work" (first one stays first)
+  { cat: "lab", title: "Lab 1", url: "https://drive.google.com/file/d/1CNiJCwWRi2IhxysDtkPI8cSGsKaF4eLR/view" },
+  { cat: "lab", title: "Lab 2", url: "https://drive.google.com/file/d/1DuE7LdKVYFfrCqZkefxZdek5kRK-eFnG/view" },
+  { cat: "lab", title: "Lab 3", url: "https://drive.google.com/file/d/1aAbATLifCok1i6KNapcmuemT8BYWlYZE/view" },
+  { cat: "lab", title: "Lab 4", url: "https://drive.google.com/file/d/1fmPbrcos0B6qu_q_6d8WYZKZrt2BFSpP/view" },
   { cat: "short", title: "Short video 1", label: "Short form", url: "https://drive.google.com/file/d/10GJ-bI2KORyXrJtDOz8JDAEfTALFOcof/view" },
   // { cat: "long", title: "Video title", label: "Client / type", url: "https://www.youtube.com/watch?v=XXXXXXXXXXX" },
 ];
@@ -150,6 +156,19 @@ VIDEOS.forEach((v, n) => {
   };
   im.src = `thumb-${p.id}.jpg`;
 });
+function layoutGroups() {
+  GROUPS.forEach((g) => {
+    const grid = document.querySelector(`#g-${g.id} .grid`);
+    if (!grid) return;
+    const rs = VIDEOS.filter((v) => v.cat === g.id).map((v) => ratioOf(parseVideo(v.url)));
+    const wide = rs.filter((r) => r > 1.2).length;
+    grid.classList.toggle("two", wide * 2 > rs.length);
+    grid.classList.toggle("four", wide * 2 <= rs.length);
+  });
+}
+layoutGroups();
+window.addEventListener("load", layoutGroups);
+setTimeout(layoutGroups, 1500);
 
 // modal
 const modal = document.getElementById("modal");
@@ -157,10 +176,9 @@ const box = modal.querySelector(".modal-box");
 const frame = modal.querySelector(".frame");
 function closeModal() { modal.classList.remove("open"); frame.innerHTML = ""; }
 document.addEventListener("click", (e) => {
-  const c = e.target.closest(".card[data-cat], .peek[data-cat]");
+  const c = e.target.closest(".card[data-cat], .peek[data-cat], .labc[data-cat]");
   if (!c) return;
-  const g = GROUPS.find((x) => x.id === c.dataset.cat);
-  const v = VIDEOS.filter((x) => x.cat === g.id)[c.dataset.i];
+  const v = VIDEOS.filter((x) => x.cat === c.dataset.cat)[c.dataset.i];
   const p = v && parseVideo(v.url);
   if (!p) return;
   setIg(frame, p);
@@ -252,7 +270,7 @@ if (!reduce) {
 
   // everything else rises in with a slight 3D tilt, staggered, then goes back to normal
   const targets = document.querySelectorAll(
-    ".group-title, .grid .card, .work-head p, .about-copy > p, .skills, .about-copy .socials, .polaroid, .reel, .contact > :not(h2):not(.cta-mark)"
+    ".group-title, .grid .card, .work-head p, .skills, .about-copy .socials, .polaroid, .reel, .contact > :not(h2):not(.cta-mark)"
   );
   targets.forEach((el) => {
     const i = Math.min([...el.parentElement.children].indexOf(el), 8);
@@ -345,7 +363,7 @@ const tvLabel = document.getElementById("tvLabel");
 function tvShow() {
   const v = tvPool[tvAt];
   workTv.classList.add("switch");   // burst of static between channels
-  tvLabel.textContent = `CH ${String(tvAt + 1).padStart(2, "0")} · ${GROUPS.find((g) => g.id === v.cat).name.toUpperCase()}`;
+  tvLabel.textContent = `CH ${String(tvAt + 1).padStart(2, "0")} · ${catName(v.cat).toUpperCase()}`;
   setTimeout(() => { workTvImg.src = coverOf(v); }, 160);
   setTimeout(() => workTv.classList.remove("switch"), 420);
 }
@@ -363,10 +381,52 @@ if (tvPool.length) {
   workTv.addEventListener("click", () => {
     const v = tvPool[tvAt];
     const i = VIDEOS.filter((x) => x.cat === v.cat).indexOf(v);
-    const card = document.querySelector(`.card[data-cat="${v.cat}"][data-i="${i}"]`);
+    const card = document.querySelector(`.card[data-cat="${v.cat}"][data-i="${i}"], .labc[data-cat="${v.cat}"][data-i="${i}"]`);
     if (card) card.click();
   });
 }
 
 // intro TV: static first, then the picture tunes in
 if (intro && intro.isConnected) setTimeout(() => intro.classList.add("tuned"), 1100);
+
+function catName(id) { return (GROUPS.find((g) => g.id === id) || { name: "Omio's Lab" }).name; }
+
+// ---------------- Omio's Lab: optional personal / experimental videos, fanned like a hand of cards ----------------
+const labEl = document.getElementById("lab");
+const labList = VIDEOS.filter((v) => v.cat === "lab");
+if (labEl && labList.length) {
+  labEl.innerHTML = `<div class="lab-head"><span class="sticker b">omio's lab</span><span class="hand lab-note">side quests, explore if you want &#8595;</span></div>
+    <div class="lab-fan" style="--t:${labList.length}">${labList.map((v, i) =>
+      `<button class="labc" data-cat="lab" data-i="${i}" style="--n:${i}" aria-label="Play ${v.title}"><img loading="lazy" src="${coverOf(v)}" alt=""><span class="lab-no pixel">${String(i + 1).padStart(2, "0")}</span><span class="tv-play">&#9654;</span></button>`
+    ).join("")}</div>`;
+}
+
+
+// ---------------- About text: words rise in one after another when the section scrolls into view ----------------
+if (!reduce) {
+  const copy = document.querySelector(".about-copy");
+  let n = 0;
+  copy.querySelectorAll(":scope > p").forEach((p) => {
+    const walk = document.createTreeWalker(p, NodeFilter.SHOW_TEXT);
+    const nodes = [];
+    while (walk.nextNode()) nodes.push(walk.currentNode);
+    nodes.forEach((node) => {
+      const frag = document.createDocumentFragment();
+      node.textContent.split(/(\s+)/).forEach((part) => {
+        if (!part) return;
+        if (/^\s+$/.test(part)) { frag.appendChild(document.createTextNode(part)); return; }
+        const sp = document.createElement("span");
+        sp.className = "aw";
+        sp.style.setProperty("--k", n++);
+        sp.textContent = part;
+        frag.appendChild(sp);
+      });
+      node.replaceWith(frag);
+    });
+    n += 6;   // short pause between paragraphs
+  });
+  copy.classList.add("split");
+  new IntersectionObserver((es, ob) => es.forEach((e) => {
+    if (e.isIntersecting) { copy.classList.add("in"); ob.disconnect(); }
+  }), { threshold: 0.35 }).observe(copy);
+}

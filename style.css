@@ -405,3 +405,87 @@ html.intro-on { overflow: hidden; }
 .intro.go .tv-digits { opacity: 0; animation: none; transition: opacity .4s; }
 .intro.go .star { opacity: 0; transition: opacity .3s; animation: none; }
 @media (prefers-reduced-motion: reduce) { .tv-float, .star { animation: none; } }
+
+/* ---- Omio's Lab (between "My Work" and the TV) ---- */
+.lab { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: center; gap: 16px; margin-top: 40px; }
+.lab-head { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; justify-content: center; }
+.lab-head .sticker { font-size: 26px; }
+.lab-note { font-size: 24px; }
+.lab-fan { display: flex; justify-content: center; align-items: flex-end; padding: 26px 0 10px; }
+.labc {
+  --o: calc(var(--n) - (var(--t) - 1) / 2);
+  position: relative; flex: none; width: clamp(130px, 13.5vw, 300px); aspect-ratio: 16 / 10; padding: 7px 7px 26px; background: #fff;
+  border: 2px solid var(--ink); box-shadow: 4px 4px 0 var(--blue); cursor: pointer; margin: 0 -1.2vw;
+  display: flex; align-items: center; justify-content: center;
+  transform: rotate(calc(var(--o) * 7deg)) translateY(calc(var(--o) * var(--o) * 9px));
+  transition: transform .45s var(--ease), box-shadow .45s var(--ease); z-index: 1;
+}
+.labc img { position: absolute; inset: 7px 7px 26px; width: calc(100% - 14px); height: calc(100% - 33px); object-fit: cover; background: var(--navy); }
+.lab-no { position: absolute; left: 9px; bottom: 4px; font-size: 15px; color: var(--ink); }
+.labc .tv-play { position: relative; width: 38px; height: 38px; font-size: 13px; color: #fff; opacity: 0; transition: opacity .3s var(--ease); margin-bottom: 19px; }
+.labc:hover, .labc:focus-visible { transform: rotate(0deg) translateY(-22px) scale(1.14); z-index: 5; box-shadow: 7px 7px 0 var(--ink); }
+.labc:hover .tv-play, .labc:focus-visible .tv-play { opacity: 1; }
+.work-head { align-items: center; }
+@media (max-width: 1100px) { .work-head { flex-wrap: wrap; } .lab { order: 3; flex-basis: 100%; margin-top: 10px; } }
+@media (max-width: 760px) { .labc { width: 30vw; margin: 0 -4vw; } .labc .tv-play { opacity: 1; } }
+
+/* ---- bigger screens: four videos fill each row, everything a size up ---- */
+@media (min-width: 1200px) {
+  .grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 26px; }
+  .grid.vertical { grid-template-columns: repeat(4, minmax(0, calc(76vh * 9 / 16))); justify-content: space-between; }
+}
+@media (min-width: 1500px) {
+  section { padding-left: 4vw; padding-right: 4vw; }
+  .folders { gap: 110px 26px; margin-top: 140px; }
+  .folder-wrap, .folder-wrap .folder-tab { width: 280px; }
+  .folder-tab { padding: 38px 24px 26px; }
+  .folder-tab small { font-size: 12px; }
+  .folder-tab strong { font-size: 34px; }
+  .folder-tab::before { width: 120px; height: 18px; top: -18px; }
+  .peek { width: 132px; height: 176px; }
+  .p0 { left: 6px; } .p1 { left: 74px; } .p2 { left: 142px; }
+  .folder-wrap:hover .p0, .folder-wrap.open .p0 { transform: translate(-10px, -84px) rotate(-11deg); }
+  .folder-wrap:hover .p1, .folder-wrap.open .p1 { transform: translateY(-104px); }
+  .folder-wrap:hover .p2, .folder-wrap.open .p2 { transform: translate(10px, -84px) rotate(11deg); }
+  .pitch { font-size: 36px; max-width: 820px; }
+  .hero-stickers .sticker, .skills .sticker { font-size: 26px; }
+  .btn { font-size: 15px; padding: 13px 24px; }
+  .about-wrap { max-width: 1640px; grid-template-columns: 360px 1fr 360px; gap: 70px; }
+  .about-copy h2 { font-size: 92px; }
+  .about-copy .lead { font-size: 38px; }
+  .about-copy p { font-size: 17px; max-width: 760px; }
+  .socials a { font-size: 15px; padding: 9px 16px; }
+  .socials a svg { width: 19px; height: 19px; }
+  .reel { width: 360px; }
+  .work-head h2 { font-size: 110px; }
+  .work-head p { font-size: 30px; }
+  .group-title { font-size: 34px; padding: 9px 26px; }
+  .group { margin-bottom: 80px; }
+  .card { padding: 11px 11px 15px; }
+  .card .play { width: 62px; height: 62px; font-size: 21px; }
+  .tv.mini { width: 400px; }
+  .tapes { height: 280px; }
+  .tape-strip { height: 66px; margin-top: -33px; font-size: 28px; }
+  .nav a { font-size: 15px; padding: 8px 18px; }
+  .nav .dots a { width: 34px; height: 34px; }
+}
+
+/* About text: word-by-word rise */
+.about-copy.split .aw { display: inline-block; opacity: 0; transform: translateY(16px); filter: blur(5px); transition: opacity .6s var(--ease), transform .6s var(--ease), filter .6s var(--ease); transition-delay: calc(var(--k) * 22ms + .25s); }
+.about-copy.split.in .aw { opacity: 1; transform: none; filter: none; }
+/* Long Form: two big videos per row */
+@media (min-width: 900px) { #g-long .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 30px; } }
+
+/* rows follow the video shape: 16:9 groups 2 per row, 9:16 groups 4 per row */
+@media (min-width: 900px) {
+  .grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 30px; }
+  .grid.four { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 26px; justify-content: stretch; }
+}
+/* phones: 16:9 groups one video per row, 9:16 groups two per row */
+@media (max-width: 899px) {
+  .grid.two, #g-long .grid { grid-template-columns: 1fr; gap: 20px; }
+  .grid.four, .grid.vertical { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+}
+/* 9:16 groups: every card frame is 9:16 (a square video fills it, the popup still plays it 1:1) */
+.grid.four .card .thumb { aspect-ratio: 9 / 16 !important; }
+.grid.four .card .thumb img { object-fit: cover; }
